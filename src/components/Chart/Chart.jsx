@@ -3,12 +3,12 @@ import { fetchDailyData } from "../../api/index";
 import { Line, Bar } from "react-chartjs-2";
 import styles from "./Chart.module.css";
 
-export default function Chart() {
+export default function Chart({ data, country }) {
   const [dailyData, setDailyData] = useState([]);
   // cai tren  bang voi
   //state = {
-  //     dailyData: {},
-  //     setDailyData:{}
+  //     dailyData: [],
+  //     setDailyData:[]
   // }
 
   useEffect(() => {
@@ -16,12 +16,11 @@ export default function Chart() {
     const fetchAPI = async () => {
       setDailyData(await fetchDailyData());
     };
-    
-    fetchAPI();
-  });
 
-    const lineChart =
-        dailyData[0] ? (
+    fetchAPI();
+  },[]);
+
+  const lineChart = dailyData[0] ? (
     <Line
       data={{
         labels: dailyData.map(({ date }) => date),
@@ -35,7 +34,7 @@ export default function Chart() {
           {
             data: dailyData.map(({ deaths }) => deaths),
             label: "Deaths",
-              borderColor: "red",
+            borderColor: "red",
             backgroundColor: "rgba(255, 0, 0,.5)",
             fill: true,
           },
@@ -44,5 +43,28 @@ export default function Chart() {
     />
   ) : null;
 
-  return <div className={styles.container}>{lineChart}</div>;
+  const barChart = data.confirmed ? (
+    <Bar
+      data={{
+        labels: ["Infected", "Recovered", "Deaths"],
+        datasets: [
+          {
+            label: "People",
+            backgroundColor: [
+              "rgba(0, 0, 255,.5)",
+              "rgba(0, 255, 0,.5)",
+              "rgba(255, 0, 0,.5)"
+            ],
+            data:[data.confirmed.value,data.recovered.value,data.deaths.value]
+          },
+        ],
+      }}
+      options={{
+        legend: { display: false },
+        title: { display: true, text: `Current state in ${country}` },
+      }}
+    />
+  ) : null;
+
+  return <div className={styles.container}>{country ? barChart : lineChart}</div>;
 }
