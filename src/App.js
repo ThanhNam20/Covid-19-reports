@@ -21,21 +21,18 @@ export default class App extends Component {
 
   handleCountryChange = async (country) => {
     const fetchedData = await fetchData(country);
-    //fetch data
-    // set the state
-    this.setState({ data: fetchedData,country:country });
-    
+    this.setState({ data: fetchedData, country: country });
   };
 
   render() {
-    const { data,country } = this.state;
+    const { data, country } = this.state;
 
     return (
       <div className={styles.container}>
         <h1 className={styles.h1}>Covid Reports</h1>
         <Cards data={data} />
         <CountryPicker handleCountryChange={this.handleCountryChange} />
-        <Chart data={data} country = {country} />
+        <Chart data={data} country={country} />
       </div>
     );
   }
